@@ -1,6 +1,6 @@
 /*
 Advent of Code 2020 Day 5
-v1, Last Modified: 2020-12-14
+v1, Last Modified: 2020-12-15
 */
 
 #include <iostream>
@@ -27,6 +27,7 @@ int main(){
     fileLogistics(input);
     vector<BoardingPass> passes;
     
+/******************************** Part 1; ******************************/
     for (int i = 0; i < input.size(); i++){
         BoardingPass curr_pass;
         string this_pass = input.at(i);
@@ -70,13 +71,55 @@ int main(){
     
     int max_seatid = passes.at(0).seatID;
     for (int i = 0; i < passes.size(); i++){
-        cout << "pass" << i << " row=" << passes.at(i).row << " col=" << passes.at(i).column << " seatid=" << passes.at(i).seatID << endl;
+        //cout << "pass" << i << " row=" << passes.at(i).row << " col=" << passes.at(i).column << " seatid=" << passes.at(i).seatID << endl;
         if (passes.at(i).seatID > max_seatid){
             max_seatid = passes.at(i).seatID;
         }
     }
     
-    cout << "max seat id = " << max_seatid << endl;
+    //cout << "max seat id = " << max_seatid << endl;
+    
+
+/******************************** Part 2; ******************************/
+    //cout << passes.size() << endl;
+    
+    vector<int> seatIDs;
+    
+    for (int i = 0; i < passes.size(); i++){
+        seatIDs.push_back(passes.at(i).seatID);
+        }
+    
+    sort(seatIDs.begin(), seatIDs.end());
+    
+    vector<int> seats_template;
+    vector<int> missing_seats;
+    
+    for (int i = seatIDs.at(0); i < seatIDs.at(seatIDs.size()-1); i++){
+        seats_template.push_back(i);
+    }
+    
+    /*
+    for (int i = 0; i < seats_template.size(); i++){
+        cout << seats_template.at(i) << endl;
+    }
+    cout << "size: " << seats_template.size() << endl;
+    */
+     
+    for (int i = 0; i < seats_template.size(); i++){
+        // if seatId at that index is not in seats_template
+        if (find(seatIDs.begin(), seatIDs.end(), seats_template.at(i)) == seatIDs.end()){
+            cout << "missing: " << seats_template.at(i) << endl;
+            missing_seats.push_back(seats_template.at(i));
+        }
+        //cout << seatIDs.at(i) << endl;
+    }
+    
+    for (int i = 0; i < missing_seats.size(); i++){
+        cout << "missing: " << missing_seats.at(i) << endl;
+    }
+     
+    
+    
     
     
     

@@ -69,7 +69,55 @@ int main(){
     ranges.push_back(last_range);
     
     vector<string> answer_strings;
-//Part2
+
+    //Part2
+    
+    vector<vector<string>> groupanswers;
+    for (int i = 0; i < ranges.size(); i++){
+        
+        vector<string> individualanswers;
+        for (int j = ranges.at(i).start; j <= ranges.at(i).end; j++){
+            individualanswers.push_back(input.at(j));
+        }
+        groupanswers.push_back(individualanswers);
+        //allanswers.push_back(groupanswers);
+    }
+    
+    string alphabet = "abcdefghijklmnopqrstuvwxyz";
+    
+    int yes_question_quorum = 0;
+    for (int i = 0; i < groupanswers.size(); i++){ // to iterate through a group
+        if (groupanswers.at(i).size() == 1){
+            yes_question_quorum++;
+        }
+        else {
+            //for all letters in the alphabet
+            for (int j = 0 ; j < alphabet.length() ; j++){
+                // itr: letter a
+                // int: letter occur
+                char letter = alphabet[j];
+                int letter_occur = 0;
+                // for all answers in a group
+                for (int k = 0; k < groupanswers.at(i).size(); k++){
+                    if (groupanswers.at(i).at(k).find(letter)){
+                        // if a is in the answer string, +1 letter occur
+                        letter_occur++;
+                    }
+                    if (letter_occur == groupanswers.at(i).size()){
+                        //if letter occur = num answers in group, yes_question_quorum++
+                        yes_question_quorum++;
+                    }
+                    
+                }
+
+            }
+
+
+        }
+    }
+    cout << "yes_question_quorum" << yes_question_quorum << endl;
+
+  /*
     for (int i = 0; i < ranges.size(); i++){
         //cout << "index i = " << i << endl;
         string answer_string;
@@ -78,15 +126,14 @@ int main(){
         }
         answer_string.pop_back();
         answer_strings.push_back(answer_string);
-    }
+    }*/
     
+    /*
     for (auto& i : answer_strings){
         cout << i << endl;
-    }
+    }*/
     
-    
-    
-    
+
     
     
     
@@ -124,7 +171,6 @@ int main(){
 //        cout << uniqueAnswersPerLine.at(i) << endl;
 //    }*/
 //    cout << "total yes: " << total_yes << endl;
-    
     
     return 0;
 }

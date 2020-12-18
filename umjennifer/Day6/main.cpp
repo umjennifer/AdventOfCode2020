@@ -1,6 +1,6 @@
 /*
 Advent of Code 2020 Day 6
-v1, Last Modified: 2020-12-15
+v2, Last Modified: 2020-12-17
 */
 
 #include <iostream>
@@ -68,76 +68,47 @@ int main(){
     last_range.end = input.size() - 1;
     ranges.push_back(last_range);
     
-    vector<string> answer_strings;
-
-    //Part2
-    
+//Part2
     vector<vector<string>> groupanswers;
-    for (int i = 0; i < ranges.size(); i++){
-        
-        vector<string> individualanswers;
-        for (int j = ranges.at(i).start; j <= ranges.at(i).end; j++){
-            individualanswers.push_back(input.at(j));
-        }
-        groupanswers.push_back(individualanswers);
-        //allanswers.push_back(groupanswers);
-    }
+     for (int i = 0; i < ranges.size(); i++){
+         vector<string> individualanswers;
+         for (int j = ranges.at(i).start; j <= ranges.at(i).end; j++){
+             individualanswers.push_back(input.at(j));
+         }
+         groupanswers.push_back(individualanswers);
+     }
     
+    
+    int yes_quorum = 0;
     string alphabet = "abcdefghijklmnopqrstuvwxyz";
     
-    int yes_question_quorum = 0;
-    for (int i = 0; i < groupanswers.size(); i++){ // to iterate through a group
-        if (groupanswers.at(i).size() == 1){
-            yes_question_quorum++;
-        }
-        else {
-            //for all letters in the alphabet
-            for (int j = 0 ; j < alphabet.length() ; j++){
-                // itr: letter a
-                // int: letter occur
-                char letter = alphabet[j];
-                int letter_occur = 0;
-                // for all answers in a group
-                for (int k = 0; k < groupanswers.at(i).size(); k++){
-                    if (groupanswers.at(i).at(k).find(letter)){
-                        // if a is in the answer string, +1 letter occur
-                        letter_occur++;
-                    }
-                    if (letter_occur == groupanswers.at(i).size()){
-                        //if letter occur = num answers in group, yes_question_quorum++
-                        yes_question_quorum++;
-                    }
-                    
+    for (int i = 0; i < groupanswers.size(); i++){
+        int answers_per_group = groupanswers.at(i).size();
+        for (int k = 0; k < alphabet.size(); k++){
+            char letter = alphabet[k];
+            int letter_occurance_in_group = 0;
+            //cout << "letter: " << letter << endl;
+            for (int j = 0; j < groupanswers.at(i).size();j++){
+                cout << groupanswers.at(i).at(j) << endl;
+                size_t found = groupanswers.at(i).at(j).find(letter);
+                if (found != string::npos){
+                    //cout << "found letter " << letter << endl;
+                    letter_occurance_in_group++;
                 }
-
             }
-
-
+            cout << letter << " count in group: " << letter_occurance_in_group << endl;
+            if (answers_per_group == letter_occurance_in_group){
+                yes_quorum++;
+            }
         }
+        //cout << "answers_per_group: " << answers_per_group << endl;
+        cout << endl;
     }
-    cout << "yes_question_quorum" << yes_question_quorum << endl;
-
-  /*
-    for (int i = 0; i < ranges.size(); i++){
-        //cout << "index i = " << i << endl;
-        string answer_string;
-        for (int j = ranges.at(i).start; j <= ranges.at(i).end; j++){
-            answer_string = answer_string + input.at(j) + ",";
-        }
-        answer_string.pop_back();
-        answer_strings.push_back(answer_string);
-    }*/
     
-    /*
-    for (auto& i : answer_strings){
-        cout << i << endl;
-    }*/
-    
-
-    
-    
+    cout << "yes_quorum: " << yes_quorum << endl;
     
 //Part1
+//    vector<string> answer_strings;
 //    for (int i = 0; i < ranges.size(); i++){
 //        //cout << "index i = " << i << endl;
 //        string answer_string;

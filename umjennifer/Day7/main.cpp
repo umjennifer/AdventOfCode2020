@@ -1,6 +1,6 @@
 /*
  Advent of Code Day 7
- v1 2020-12-20
+ v1.2 2020-12-20
  Using example provided
  
  light red bags contain 1 bright white bag, 2 muted yellow bags.
@@ -15,157 +15,108 @@ dotted black bags contain no other bags.
 */
 
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <vector>
 #include <set>
+#include <map>
 using namespace std;
 
 struct Bag {
     string color;
-    vector<Bag> canContain;
+    //TODO: map <Bag, int> canContain;
     vector<Bag> fitsInto;
 };
 
 void findAllAncestors(Bag, vector<Bag>&);
 
 int main() {
-    // instantiate bag types
-    Bag lightRed;
-    lightRed.color = "lightRed";
     
-    Bag darkOrange;
-    darkOrange.color = "darkOrange";
-    
-    Bag brightWhite;
-    brightWhite.color = "brightWhite";
-    
-    Bag mutedYellow;
-    mutedYellow.color = "mutedYellow";
-    
-    Bag shinyGold;
-    shinyGold.color = "shinyGold";
-    
-    Bag darkOlive;
-    darkOlive.color = "darkOlive";
-    
-    Bag vibrantPlum;
-    vibrantPlum.color = "vibrantPlum";
-    
-    Bag fadedBlue;
-    fadedBlue.color = "fadedBlue";
-    
-    Bag dottedBlack;
-    dottedBlack.color = "dottedBlack";
+    vector <string> input;
+    ifstream fin;
+    string this_line;
 
-    lightRed.canContain = {
-        brightWhite,
-        mutedYellow,
-        mutedYellow
-    };
+    fin.open("input.txt");
     
-    darkOrange.canContain = {
-        brightWhite,
-        brightWhite,
-        brightWhite,
-        mutedYellow,
-        mutedYellow,
-        mutedYellow,
-        mutedYellow
-    };
-    
-    brightWhite.canContain = {
-        shinyGold
-    };
-    
-    mutedYellow.canContain = {
-        shinyGold,
-        shinyGold,
-        fadedBlue,
-        fadedBlue,
-        fadedBlue,
-        fadedBlue,
-        fadedBlue,
-        fadedBlue,
-        fadedBlue,
-        fadedBlue,
-        fadedBlue
-    };
-    
-    shinyGold.canContain = {
-        darkOlive,
-        vibrantPlum,
-        vibrantPlum
-    };
-    
-    darkOlive.canContain = {
-        fadedBlue,
-        fadedBlue,
-        fadedBlue,
-        dottedBlack,
-        dottedBlack,
-        dottedBlack,
-        dottedBlack
+    // save all lines of input into vector "input"
+    while(!fin.eof()) {
+        getline(fin, this_line);
+        //cout << line << endl;
+        this_line.pop_back();
+        input.push_back(this_line);
         
-    };
-    
-    vibrantPlum.canContain = {
-        fadedBlue,
-        fadedBlue,
-        fadedBlue,
-        fadedBlue,
-        fadedBlue,
-        dottedBlack,
-        dottedBlack,
-        dottedBlack,
-        dottedBlack,
-        dottedBlack,
-        dottedBlack
-    };
-    
-    fadedBlue.canContain = {};
-    dottedBlack.canContain = {};
-    
-    lightRed.fitsInto = {};
-    darkOrange.fitsInto = {};
-    brightWhite.fitsInto = {lightRed, darkOrange};
-    mutedYellow.fitsInto = {lightRed, darkOrange};
-    shinyGold.fitsInto = {brightWhite, mutedYellow};
-    darkOlive.fitsInto = {shinyGold};
-    vibrantPlum.fitsInto = {shinyGold};
-    fadedBlue.fitsInto = {mutedYellow, darkOlive, vibrantPlum};
-    dottedBlack.fitsInto = {darkOlive, vibrantPlum};
-    
-    vector<Bag> bagAncestors;
-    
-    
-        // generation++
-        // add that bag that shiny gold bag fits into into
-        // find the parents of the bag that generation 1 bag fits into
-    
-    findAllAncestors(shinyGold, bagAncestors);
-    
-    
-//    for (int i = 0; i < shinyGold.fitsInto.size(); i++){ // for bag that shiny gold bag fits into
-//        Bag curr_bag;
-//        curr_bag = shinyGold.fitsInto.at(i);
-//        bagColorsWithDescendentShinyGold.push_back(curr_bag);
-//        generation++;
-//        cout << "curr_bag color: " << curr_bag.color << endl;
-//        for (int j = 0; j < curr_bag.fitsInto.size(); j++){
-//            cout << "fits into: " << curr_bag.fitsInto.at(i).color << endl;
-//        }
-//    }
-    
-    set<string> uniqueBagAncestors;
-    for (int i = 0; i < bagAncestors.size(); i++){
-        uniqueBagAncestors.insert(bagAncestors.at(i).color);
     }
-
-    cout << endl << "unique bag ancestors: ";
-    for (string bag : uniqueBagAncestors){
-        cout << bag << ", ";
+    fin.close();
+    
+    for (int i = 0; i < input.size(); i++){
+        string line = input.at(i);
+        cout << line << endl;
     }
     cout << endl;
-    cout << "size: " << uniqueBagAncestors.size() << endl;
+    
+    for (int i = 0; i < input.size(); i++){
+        string line = input.at(i);
+        Bag bagA;
+        bagA.color = line.substr(0, line.find(" bags contain "));
+        cout << bagA.color << endl;
+        
+        line = line.erase(0,line.find("contain ")); // turns line into :"contain 4 mirrored fuchsia bags, 4 dotted indigo bags, 3 faded orange bags, 5 plaid crimson bags"
+        line = line.erase(0,8); // turns line into :"4 mirrored fuchsia bags, 4 dotted indigo bags, 3 faded orange bags, 5 plaid
+        
+        cout << "modified line:" << line << endl;
+        
+        stringstream linestream(line);
+        string child;
+        while (!linestream.eof()){
+            getline(linestream,child,',');
+            if (child[0] == ' '){
+                child.erase(0,1);
+            }
+            cout << "child:" << child << " "; //4 mirrored fuchia bags
+            //TODO: QUANTITY
+            int quantity = stoi(child.substr(0,child.find(" ")));
+            child = child.erase(0,child.find(" "));
+            child = child.erase(0,1);
+            child.pop_back();
+            child.pop_back();
+            child.pop_back();
+            child.pop_back();
+            child.pop_back();
+            string color = child;
+            cout << ", quantity:" << quantity << ", color:" << color << endl;
+            Bag this_bag;
+            this_bag.color = color;
+        }
+        cout << endl;
+    }
+    
+    
+    
+    /*
+    Bag bagA;
+    string example = "faded yellow bags contain 4 mirrored fuchsia bags, 4 dotted indigo bags, 3 faded orange bags, 5 plaid crimson bags.";
+    bagB.color = example.substr(0,example.find(" bags contain "));
+    */
+    
+    
+    
+
+
+    
+//    vector<Bag> bagAncestors;
+//    findAllAncestors(shinyGold, bagAncestors);
+//
+//    set<string> uniqueBagAncestors;
+//    for (int i = 0; i < bagAncestors.size(); i++){
+//        uniqueBagAncestors.insert(bagAncestors.at(i).color);
+//    }
+//
+//    cout << endl << "unique bag ancestors: ";
+//    for (string bag : uniqueBagAncestors){
+//        cout << bag << ", ";
+//    }
+//    cout << endl;
+//    cout << "size: " << uniqueBagAncestors.size() << endl;
     
     return 0;
 }

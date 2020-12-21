@@ -1,1 +1,4 @@
 main
+Cargo.lock
+*.swp
+*/target/*

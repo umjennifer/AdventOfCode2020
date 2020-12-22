@@ -1,17 +1,6 @@
 /*
  Advent of Code Day 7
  v1.2 2020-12-20
- Using example provided
- 
- light red bags contain 1 bright white bag, 2 muted yellow bags.
-dark orange bags contain 3 bright white bags, 4 muted yellow bags.
-bright white bags contain 1 shiny gold bag.
-muted yellow bags contain 2 shiny gold bags, 9 faded blue bags.
-shiny gold bags contain 1 dark olive bag, 2 vibrant plum bags.
-dark olive bags contain 3 faded blue bags, 4 dotted black bags.
-vibrant plum bags contain 5 faded blue bags, 6 dotted black bags.
-faded blue bags contain no other bags.
-dotted black bags contain no other bags.
 */
 
 #include <iostream>
@@ -26,12 +15,15 @@ struct Bag {
     string color;
     //TODO: map <Bag, int> canContain;
     vector<Bag> fitsInto;
+    vector<Bag> canContain;
 };
 
 void findAllAncestors(Bag, vector<Bag>&);
 
 int main() {
-    
+    // TODO: convert to set
+    vector<Bag> allBags;
+// Take care of input
     vector <string> input;
     ifstream fin;
     string this_line;
@@ -47,6 +39,7 @@ int main() {
         
     }
     fin.close();
+
     
     for (int i = 0; i < input.size(); i++){
         string line = input.at(i);
@@ -54,10 +47,12 @@ int main() {
     }
     cout << endl;
     
+    Bag bagA;
     for (int i = 0; i < input.size(); i++){
         string line = input.at(i);
-        Bag bagA;
+        
         bagA.color = line.substr(0, line.find(" bags contain "));
+        allBags.push_back(bagA);
         cout << bagA.color << endl;
         
         line = line.erase(0,line.find("contain ")); // turns line into :"contain 4 mirrored fuchsia bags, 4 dotted indigo bags, 3 faded orange bags, 5 plaid crimson bags"
@@ -65,32 +60,73 @@ int main() {
         
         cout << "modified line:" << line << endl;
         
-        stringstream linestream(line);
-        string child;
-        while (!linestream.eof()){
-            getline(linestream,child,',');
-            if (child[0] == ' '){
-                child.erase(0,1);
+        if (line == "no other bags"){
+            
+        }
+        else {
+            stringstream linestream(line);
+            string child;
+            
+            while (!linestream.eof()){
+                getline(linestream,child,',');
+                if (child[0] == ' '){
+                    child.erase(0,1);
+                }
+                cout << "child:" << child << " "; //4 mirrored fuchia bags
+                //TODO: QUANTITY
+                int quantity = stoi(child.substr(0,child.find(" ")));
+                child = child.erase(0,child.find(" "));
+                child = child.erase(0,1);
+                child.pop_back();
+                child.pop_back();
+                child.pop_back();
+                child.pop_back();
+                child.pop_back();
+                string color = child;
+                cout << ", quantity:" << quantity << ", color:" << color << endl;
+                Bag this_bag;
+                this_bag.color = color;
+                this_bag.fitsInto.push_back(bagA); // this_bag can fit into BagA
+                bagA.canContain.push_back(this_bag); // BagA can contain this bag
+                allBags.push_back(this_bag);
             }
-            cout << "child:" << child << " "; //4 mirrored fuchia bags
-            //TODO: QUANTITY
-            int quantity = stoi(child.substr(0,child.find(" ")));
-            child = child.erase(0,child.find(" "));
-            child = child.erase(0,1);
-            child.pop_back();
-            child.pop_back();
-            child.pop_back();
-            child.pop_back();
-            child.pop_back();
-            string color = child;
-            cout << ", quantity:" << quantity << ", color:" << color << endl;
-            Bag this_bag;
-            this_bag.color = color;
+            cout << endl;
+        }
+    }
+    cout << endl;
+    //cout << all << endl;
+
+    
+    
+    for (int i = 0; i < allBags.size(); i++){
+        cout << allBags.at(i).color << " fits into ";
+        for (int j = 0; j < allBags.at(i).fitsInto.size(); j++){
+            cout << allBags.at(i).fitsInto.at(j).color << ",";
         }
         cout << endl;
     }
+    cout << endl;
+     
+     
     
-    
+    // keep unique values in allBags
+/*
+    cout << "all bags: " << endl;
+    for (int i = 0; i < allBags.size(); i++){
+        cout << allBags.at(i).color << endl;
+        
+        cout << allBags.at(i).color << " fits in: ";
+        for (int j = 0; j < allBags.at(i).fitsInto.size(); j++){
+            cout << allBags.at(i).fitsInto.at(j).color << ",";
+        }
+        cout << endl;
+        cout << allBags.at(i).color << " can contain: ";
+        for (int j = 0; j < allBags.at(i).canContain.size(); j++){
+            cout << allBags.at(i).canContain.at(j).color << ",";
+        }
+        cout << endl << endl;
+    }
+    */
     
     /*
     Bag bagA;

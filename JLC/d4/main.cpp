@@ -30,14 +30,14 @@ class Passport {
 
 
 void Passport::print() {
-    cout << "PID: " << this->pid
-         << "  BYR: " << this->byr
-         << "  IYR: " << this->iyr
-         << "  EYR: " << this->eyr
-         << "  HCL: " << this->hcl
-         << "  ECL: " << this->ecl
-         << "  HGT: " << this->hgt
-         << "  CID: " << this->cid
+    cout << this->pid
+         // << "  BYR: " << this->byr
+         // << "  IYR: " << this->iyr
+         // << "  EYR: " << this->eyr
+         // << "  HCL: " << this->hcl
+         // << "  ECL: " << this->ecl
+         // << "  HGT: " << this->hgt
+         // << "  CID: " << this->cid
          << endl;
 }
 void Passport::set_byr(string input){
@@ -106,7 +106,9 @@ void Passport::set_ecl(string input) {
 void Passport::set_pid(string input) {
     smatch match;
     regex_search(input, match, pid_re);
-    this->pid = match.str(0);
+    if (input.size() == 9){
+        this->pid = match.str(0);
+    }
 }
 
 

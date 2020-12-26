@@ -1,6 +1,6 @@
 /*
  Advent of Code Day 7
- v1.6 2020-12-25
+ v1.7 2020-12-25
 */
 
 #include <iostream>
@@ -31,6 +31,8 @@ void updateFitsInto(unordered_map<string, Bag>&);
 void updateBagsAncestorColors(string,unordered_map<string, Bag>, set<string>&);
 int countBagAncestorColorsTotal(set<string>);
 void partOne(unordered_map<string, Bag>);
+void partTwo(unordered_map<string, Bag>);
+void updateBagsDescendents(string,unordered_map<string, Bag>,vector<Bag>&);
 
 int main(){
     unordered_map<string, Bag> allBags;
@@ -42,7 +44,8 @@ int main(){
     getDatafromString(inputVector, allBags);
     updateFitsInto(allBags);
     
-    partOne(allBags);
+    //partOne(allBags);
+    partTwo(allBags);
     
     return 0;
 }
@@ -211,4 +214,24 @@ void partOne(unordered_map<string, Bag> allBags){
     updateBagsAncestorColors(desired_color, allBags, BagsAncestorColors);
     int total = countBagAncestorColorsTotal(BagsAncestorColors);
     cout << "Total ancestors: " << total << endl;
+}
+
+void partTwo(unordered_map<string, Bag> allBags){
+    string desired_color = "shiny gold";
+    vector<Bag> BagDescendents;
+    updateBagsDescendents(desired_color,allBags,BagDescendents);
+    cout << "Total descendents: " << BagDescendents.size() << endl;
+}
+
+void updateBagsDescendents(string desired_color, unordered_map<string, Bag> allBags,vector<Bag>& BagDescendents){
+    Bag desiredBag = allBags[desired_color]; // find desired bag in all bags
+    for (int i = 0; i < desiredBag.canContain.size(); i++){
+        Bag descendent = desiredBag.canContain.at(i);
+        for (int j = 0; j < descendent.quantity; j++){
+            BagDescendents.push_back(descendent);
+            cout << "pushing back:" << descendent.color << endl;
+            updateBagsDescendents(descendent.color, allBags, BagDescendents);
+        }
+    }
+    
 }

@@ -14,22 +14,22 @@
 using namespace std;
 
 struct Value {
-    int val;
+    unsigned long long int val;
     int index_in_inputVector; // this will be the key in unordered map
     int preamble_start = 0;
     int preamble_end = 0;
     bool foundTwoPreambleValThatSumToThisVal = true;
 };
 
-void saveInputInVector(string, vector<int>&);
-void populateDataInallValues(int, unordered_map<int, Value>&, vector<int>);
+void saveInputInVector(string, vector<unsigned long long int>&);
+void populateDataInallValues(int, unordered_map<int, Value>&, vector<unsigned long long int>);
 void printallValues(unordered_map<int, Value>);
-void updateBool(unordered_map<int, Value>&, vector<int>);
+void updateBool(unordered_map<int, Value>&, vector<unsigned long long int>);
 void findFirstNumberWithoutProperty(unordered_map<int, Value>);
 
 int main() {
     string filename = "input.txt";
-    vector<int> inputVector;
+    vector<unsigned long long int> inputVector;
     saveInputInVector(filename, inputVector);
     
 //    for (int i = 0; i < inputVector.size(); i++){
@@ -45,7 +45,7 @@ int main() {
     
 }
 
-void saveInputInVector(string filename, vector<int>& inputVector){
+void saveInputInVector(string filename, vector<unsigned long long int>& inputVector){
     ifstream fin;
     string line;
 
@@ -55,12 +55,12 @@ void saveInputInVector(string filename, vector<int>& inputVector){
     while(!fin.eof()) {
         getline(fin, line);
         cout << line << endl;
-        inputVector.push_back(stoi(line));
+        inputVector.push_back(stoull(line));
     }
     fin.close();
 }
 
-void populateDataInallValues(int preamble_len, unordered_map<int, Value>& allValues, vector<int> inputVector){
+void populateDataInallValues(int preamble_len, unordered_map<int, Value>& allValues, vector<unsigned long long int> inputVector){
     for (int i = preamble_len; i < inputVector.size(); i++){
         Value this_val;
         this_val.val = inputVector.at(i);
@@ -78,7 +78,7 @@ void printallValues(unordered_map<int, Value> allValues){
     }
 }
 
-void updateBool(unordered_map<int, Value>& allValues, vector<int> inputVector){
+void updateBool(unordered_map<int, Value>& allValues, vector<unsigned long long int> inputVector){
     for (auto value : allValues){
 //        Value* ptr = &value.second;
 //        for (int i = ptr->preamble_start; i < ptr->preamble_end; i++){

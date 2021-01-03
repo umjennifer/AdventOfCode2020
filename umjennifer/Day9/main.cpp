@@ -25,12 +25,16 @@ void saveInputInVector(string, vector<unsigned long long int>&);
 void populateDataInallValues(int, unordered_map<int, Value>&, vector<unsigned long long int>);
 void printallValues(unordered_map<int, Value>);
 void updateBool(unordered_map<int, Value>&, vector<unsigned long long int>);
-void findFirstNumberWithoutProperty(unordered_map<int, Value>);
+void findFirstNumberWithoutProperty(unordered_map<int, Value>, unsigned long long int&);
+void partTwofindContiguousVals(unsigned long long int, vector<unsigned long long int>, unordered_map<int, Value>);
+void findIndexOfDesiredValue(unsigned long long int, int&, unordered_map<int, Value>);
+void sumMinMax(vector<unsigned long long int>, vector<int>);
 
 int main() {
     string filename = "input.txt";
     vector<unsigned long long int> inputVector;
     saveInputInVector(filename, inputVector);
+    unsigned long long int first_num_wo_prop;
     
 //    for (int i = 0; i < inputVector.size(); i++){
 //        cout << inputVector.at(i) << endl;
@@ -41,7 +45,10 @@ int main() {
     populateDataInallValues(preamble_len, allValues, inputVector);
     updateBool(allValues, inputVector);
     //printallValues(allValues);
-    findFirstNumberWithoutProperty(allValues);
+    findFirstNumberWithoutProperty(allValues, first_num_wo_prop);
+    //cout << "Number w/o this property=" << first_num_wo_prop << endl;
+    partTwofindContiguousVals(first_num_wo_prop, inputVector, allValues);
+    
     
 }
 
@@ -54,7 +61,7 @@ void saveInputInVector(string filename, vector<unsigned long long int>& inputVec
     // save all lines of input into vector "input"
     while(!fin.eof()) {
         getline(fin, line);
-        cout << line << endl;
+        //cout << line << endl;
         inputVector.push_back(stoull(line));
     }
     fin.close();
@@ -87,7 +94,7 @@ void updateBool(unordered_map<int, Value>& allValues, vector<unsigned long long 
         int count_foundTwoPreambleValThatSumToThisVal = 0;
         
         Value* ptr = &value.second;
-        cout << "val= " << ptr-> val << endl;
+        //cout << "val= " << ptr-> val << endl;
         for (int i = ptr->preamble_start; i < ptr->preamble_end; i++){
             for (int j = ptr->preamble_end; j > ptr->preamble_start; j--){
                 //cout << "i=" << i << ",val@i=" << inputVector.at(i) << " j=" << j << ",val@j=" << inputVector.at(j) << " sum=:" << inputVector.at(i) + inputVector.at(j) << endl;
@@ -104,11 +111,77 @@ void updateBool(unordered_map<int, Value>& allValues, vector<unsigned long long 
     }
 }
 
-void findFirstNumberWithoutProperty(unordered_map<int, Value> allValues){
+void findFirstNumberWithoutProperty(unordered_map<int, Value> allValues, unsigned long long int& first_num_wo_prop){
     for (auto value : allValues){
         Value* ptr = &value.second;
         if (ptr->foundTwoPreambleValThatSumToThisVal == false){
-            cout << "Number w/o this property=" << ptr->val << endl;
+            first_num_wo_prop = ptr->val;
+        }
+        
+    }
+}
+
+void partTwofindContiguousVals(unsigned long long int desired_sum, vector<unsigned long long int> inputVector, unordered_map<int, Value> allValues){
+    int index_of_desired_val;
+    cout << "desired sum=" << desired_sum << endl;
+    
+    findIndexOfDesiredValue(desired_sum,index_of_desired_val, allValues);
+    cout << "index_of_desired_val=" << index_of_desired_val << endl;
+
+    for (int i = 0; i < index_of_desired_val; i++){ // start @ index 13, val = 182
+        vector<int> range;
+        for (int j = i; j < index_of_desired_val; j++){
+            range.push_back(j);
+            
+            unsigned long long int total = 0;
+            for (int elem : range){
+                //cout << elem << " | total=";
+                total += inputVector.at(elem);
+                //cout << total << endl;
+            }
+//            cout << endl;
+//            cout << " | total=" << total;
+//            if (total == desired_sum){
+//                cout << " DESIRED SUM IS HERE!" << endl;
+//
+//            }
+//            else {
+//                //cout << endl;
+//            }
+            
+            if (total == desired_sum){
+                cout << "Desired sum found=" << desired_sum << endl;
+                sumMinMax(inputVector, range);
+
+            }
+        }
+        //cout << endl;
+    }
+}
+
+void findIndexOfDesiredValue(unsigned long long int desired_sum, int& index_of_desired_val,unordered_map<int, Value> allValues){
+    // TODO: find key by value of struct, instead of iterating through unordered map
+    for (auto value : allValues){
+        Value* ptr = &value.second;
+        if (ptr->val == desired_sum){
+            index_of_desired_val = value.first;
         }
     }
+}
+
+void sumMinMax(vector<unsigned long long int> inputVector, vector<int> range){
+    unsigned long long int min = inputVector.at(range.at(0));
+    unsigned long long int max = inputVector.at(range.at(0));
+    
+    for (int i = 0; i < range.size(); i++){
+        cout << "Values:" << inputVector.at(range.at(i)) << " " << endl;
+        
+        if (inputVector.at(range.at(i)) > max){
+            max = inputVector.at(range.at(i));
+        }
+        if (inputVector.at(range.at(i)) < min){
+            min = inputVector.at(range.at(i));
+        }
+    }
+    cout << "Sum of largest and smallest values:" << min + max << endl;
 }
